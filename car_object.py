@@ -11,9 +11,9 @@ import time
 def Init():
     #glOrtho(-10,10,-10,10,-10,10)
     glMatrixMode(GL_PROJECTION)
-    gluPerspective(50,1,1.3,80)
-    gluLookAt(-10,50,0,0,0,0,1,0,0)
-    glClearColor(1,1,1,1)
+    gluPerspective(50, 1, 1.3, 80)
+    gluLookAt(-10, 50, 0, 0, 0, 0, 1, 0, 0)
+    glClearColor(1, 1, 1, 1)
 x=0
 y=0
 z =0
@@ -30,104 +30,94 @@ def draw():
     glPopMatrix()
 
 
-def Anime():
-    global x,y,co,color, z, move, cnt, acc, val
-    if z >18 or z< -18:
-        playsound("/home/ahmdalgendi/PycharmProjects/road_fight_phase 1/car.wav")
-        z=0
-        x=0
-        move =0
-        acc=0
-        val=0
+def car():
 
-    time.sleep(0.0166666667)
-
-    glMatrixMode(GL_MODELVIEW)
-    glLoadIdentity()
-    glClear(GL_COLOR_BUFFER_BIT)
-
-    glPushMatrix()
-    glPushAttrib(GL_ALL_ATTRIB_BITS)
-
-
-    for i in range(-100,80, 10):
-        glLoadIdentity()
-        glColor(0, 0, 0)
-        glScale(.5, 0.001, .2)
-        glTranslate(i, 0, 0)
-        glutSolidCube(4)
-        #glFlush()
-    glPopAttrib()
-    glPopMatrix()
 
 
     glPushMatrix()
     glPushAttrib(GL_ALL_ATTRIB_BITS)
-
-
-    glLoadIdentity()
-    glTranslate(x,5*.25,0+z)
-    glScale(0.5,.25,0.5)
-    glutSolidCube(5)
 
 ##################
-    glColor3f(0,0,0)
 
-    glLoadIdentity()
-    glTranslate(x+2.25,-2.5*.25,2.5*.5+z)
-    glRotate(y,0,0,1)
+    glPushMatrix()
+    glPushAttrib(GL_ALL_ATTRIB_BITS)
+
+    glColor3f(1, 0, 0)
+    glScale(1, .25, .5)
+    glTranslate(0, 0, 0)
+    glutSolidCube(5)
+    glPopAttrib()
+    glPopMatrix()
+    ######################3
+
+    glPushMatrix()
+    glPushAttrib(GL_ALL_ATTRIB_BITS)
+    glColor(1.5,1,.548)
+    glTranslate(0,5*.25,0)
+    glScale(0.5,.25,0.5)
+    glutSolidCube(5)
+    glPopAttrib()
+    glPopMatrix()
+##################
+
+
+    glPushMatrix()
+    glPushAttrib(GL_ALL_ATTRIB_BITS)
+    glColor(0, 0, 1)
+    glTranslate(2.25,-2.5*.25,2.5*.5)
     glutWireTorus(.12,.4,12,8)
-
-    glLoadIdentity()
-    glTranslate(x+2.25,-2.5*.25,-2.5*.65+z)
-    glRotate(y,0,0,1)
-
-    glutWireTorus(.12,.4,12,8)
-
-    glLoadIdentity()
-    glTranslate(x-2.25,-2.5*.25,2.5*.5+z)
-    glRotate(y,0,0,1)
-    glutWireTorus(.12,.4,12,8)
-
-    glLoadIdentity()
-    glTranslate(x-2.25,-2.5*.25,-2.5*.55+z)
-    glRotate(y,0,0,1)
-
-    glutWireTorus(.12,.4,12,8)
-
+    glPopAttrib()
+    glPopMatrix()
 #################
 
-    glColor3f(0,color+.5,1)
-    glLoadIdentity()
-    glTranslate(x+2.25,-2.5*.25,0.1+z)
-    glutSolidSphere(.25,10,40)
 
-    glLoadIdentity()
-    glTranslate(x+2.25,-2.5*.25,-1+z)
-    glutSolidSphere(.25,10,40)
+    glPushMatrix()
+    glPushAttrib(GL_ALL_ATTRIB_BITS)
+    glTranslate(2.25,-2.5*.25,-2.5*.65)
+    glColor(0, 0, 1)
+    glRotate(0,0,0,1)
+    glutWireTorus(.12,.4,12,8)
+    glPopAttrib()
+    glPopMatrix()
+##############
 
+    glPushMatrix()
+    glPushAttrib(GL_ALL_ATTRIB_BITS)
+    glTranslate(-2.25,-2.5*.25,2.5*.5)
+    glColor(0, 0, 1)
+    glRotate(0,0,0,1)
+    glutWireTorus(.12,.4,12,8)
+    glPopAttrib()
+    glPopMatrix()
+##########33
+    glPushMatrix()
+    glPushAttrib(GL_ALL_ATTRIB_BITS)
+    glTranslate(2.25,-2.5*.25,-2.5*.55)
+    glRotate(0,0,0,1)
+    glColor(0, 0, 1)
+    glutWireTorus(.12,.4,12,8)
+    glPopAttrib()
+    glPopMatrix()
+#################
 
-    if(x > 25 ):
-        x=-25
-    if x <-28:
-        x = 24
-
-    x-=acc * co
-    y+= .4*co
-    z+= .5 * move
-
-    acc+=val
-    if acc >.8:
-        acc=.8
-    if val<0:
-        if acc < 0:
-            acc =0
 
     glPopAttrib()
     glPopMatrix()
-    glColor(0,0,1)
-    glScale(100, .001 , 10)
-    glutWireCube(4)
+
+x=0
+def Anime():
+    global x
+    glMatrixMode(GL_MODELVIEW)
+    glClear(GL_COLOR_BUFFER_BIT)
+    glLoadIdentity()
+
+
+    glTranslate(x,0,0)
+    car()
+    x+=.01
+    if x > 15:
+        x = -30
+
 
     glFlush()
 
@@ -136,7 +126,7 @@ def keyup(key, xx, yy):
     if key == b"d" or key == b"a":
         move = 0
     if key ==b"w":
-        val = -val * .4
+        val = -val
     if key == b"s":
         val = 0
 
