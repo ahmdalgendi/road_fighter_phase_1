@@ -1,9 +1,11 @@
 car.wav
 task.py
-.idea
+/.idea
 TEXTURE_CREDITS.txt
 texture.py
 testing_tool.py
 
 Animation-2.py
 Car_with_ACC.spec
+/venv
+/__pycache__
