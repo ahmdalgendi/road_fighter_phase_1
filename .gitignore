@@ -16,3 +16,10 @@ trees.bmp
 wall.jpg
 wood.jpg
 .idea
+
+TEXTURE_CREDITS.txt
+texture.py
+testing_tool.py
+Car_with_ACC.spec
+Animation-2.py
+.gitignore
