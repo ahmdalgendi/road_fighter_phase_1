@@ -124,7 +124,6 @@ def Anime():
     glPushMatrix()
     glPushAttrib(GL_ALL_ATTRIB_BITS)
 
-
     for i in range(min(int(ceil(x-50)),int(ceil (x+100))),max(int(ceil(x-100)),int(ceil (x+70))), 10):
         glLoadIdentity()
         glColor(0, 0, 0)
@@ -141,8 +140,6 @@ def Anime():
 
     glTranslate(-15, 0, z)
     car()
-    print(x)
-
     if x <-15:
         x = 15
 
