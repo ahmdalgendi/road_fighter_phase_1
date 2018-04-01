@@ -1,97 +1,179 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
-import numpy as np
-from math import *
 
-def Init():
-    #glOrtho(-10,10,-10,10,-10,10)
+FROM_RIGHT = 1
+FROM_LEFT = 2
+FROM_TOP = 3
+FROM_BOTTOM = 4
+
+WINDOW_WIDTH = 800
+WINDOW_HEIGHT = 500
+
+deltaX = 1
+deltaY = 1
+
+time_interval = 10  # try  1000 msec
+
+
+class RECTA:
+    def __init__(self, left, bottom, right, top):
+        self.left = left
+        self.bottom = bottom
+        self.right = right
+        self.top = top
+
+
+ball = RECTA(100, 100, 120, 120)  # initial position of the ball
+wall = RECTA(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
+player = RECTA(0, 0, 60, 10)  # initial position of the bat
+
+
+# Initialization
+def init():
+    glClearColor(0.0, 0.0, 0.0, 0.0)
+
     glMatrixMode(GL_PROJECTION)
-    gluPerspective(60,1,1.1,50)
-    gluLookAt(10,10,10,0,0,0,0,1,0)
-    glClearColor(1,1,1,1)
-x=0
-y=0
-color = 0
-co = -1
-def Anime():
-    global x,y,co,color
-    glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
+    glOrtho(0, WINDOW_WIDTH, 0, WINDOW_HEIGHT, 0, 1)  # l,r,b,t,n,f
+
+    glMatrixMode(GL_MODELVIEW)
+
+
+def DrawRectangle(rect):
+    glLoadIdentity()
+    glBegin(GL_QUADS)
+    glVertex(rect.left, rect.bottom, 0)  # Left - Bottom
+    glVertex(rect.right, rect.bottom, 0)
+    glVertex(rect.right, rect.top, 0)
+    glVertex(rect.left, rect.top, 0)
+    glEnd()
+
+
+def drawText(string, x, y):
+    glLineWidth(2)
+    glColor(1, 1, 0)  # Yellow Color
+    glLoadIdentity()
+    #       glScale(0.13,0.13,1)  # Try this line
+    glTranslate(x, y, 0)
+    glScale(0.13, 0.13, 1)
+    string = string.encode()  # conversion from Unicode string to byte string
+    for c in string:
+        glutStrokeCharacter(GLUT_STROKE_ROMAN, c)
+
+
+def Test_Ball_Wall(ball, wall):  # Collision Detection between Ball and Wall
+    global FROM_RIGHT
+    global FROM_LEFT
+    global FROM_TOP
+    global FROM_BOTTOM
+
+    if ball.right >= wall.right:
+        return FROM_RIGHT
+    if ball.left <= wall.left:
+        return FROM_LEFT
+    if ball.top >= wall.top:
+        return FROM_TOP
+    if ball.bottom <= wall.bottom:
+        return FROM_BOTTOM
+
+    # Otherwise this function returns None
+
+
+def Test_Ball_Player(ball, player):  # Collision Detection between Ball and Bat
+    if ball.bottom <= player.top and ball.left >= player.left and ball.right <= player.right:
+        return True
+    return False
+
+
+# Key Board Messages
+def keyboard(key, x, y):
+    if key == b"q":
+        sys.exit(0)
+
+
+mouse_x = 0
+
+
+def MouseMotion(x, y):
+    global mouse_x
+    mouse_x = x
+
+
+def Timer(v):
+    Display()
+
+    glutTimerFunc(time_interval, Timer, 1)
+
+
+pcResult = 0
+playerResult = 0
+
+
+def Display():
+    global pcResult
+    global playerResult
+    global FROM_RIGHT
+    global FROM_LEFT
+    global FROM_TOP
+    global FROM_BOTTOM
+    global deltaX
+    global deltaY
+
     glClear(GL_COLOR_BUFFER_BIT)
 
-    glColor3f(1,0,0)
-    glScale(1,.25,.5)
-    glTranslate(x,0,0)
-    glutWireCube(5)
-    glLoadIdentity()
-    glTranslate(x,5*.25,0)
-    glScale(0.5,.25,0.5)
-    glutWireCube(5)
+    string = "PC : " + str(pcResult)
+    drawText(string, 10, 440)
+    string = "Player :  " + str(playerResult)
+    drawText(string, 10, 400)
 
-##################
-    glColor3f(1,0,0)
+    ball.left = ball.left + deltaX  # updating ball's coordinates
+    ball.right = ball.right + deltaX
+    ball.top = ball.top + deltaY
+    ball.bottom = ball.bottom + deltaY
 
-    glLoadIdentity()
-    glTranslate(x+2.25,-2.5*.25,2.5*.5)
-    glRotate(y,0,0,1)
-    glutWireTorus(.12,.4,12,8)
+    glColor(1, 1, 1)  # White color
 
-    glLoadIdentity()
-    glTranslate(x+2.25,-2.5*.25,-2.5*.65)
-    glRotate(y,0,0,1)
+    DrawRectangle(ball)
 
-    glutWireTorus(.12,.4,12,8)
+    # print(Test_Ball_Wall(ball,wall))
 
-    glLoadIdentity()
-    glTranslate(x-2.25,-2.5*.25,2.5*.5)
-    glRotate(y,0,0,1)
-    glutWireTorus(.12,.4,12,8)
+    if Test_Ball_Wall(ball, wall) == FROM_RIGHT:
+        deltaX = -1
 
-    glLoadIdentity()
-    glTranslate(x-2.25,-2.5*.25,-2.5*.55)
-    glRotate(y,0,0,1)
+    if Test_Ball_Wall(ball, wall) == FROM_LEFT:
+        deltaX = 1
 
-    glutWireTorus(.12,.4,12,8)
+    if Test_Ball_Wall(ball, wall) == FROM_TOP:
+        deltaY = -1
 
-#################
+    if Test_Ball_Wall(ball, wall) == FROM_BOTTOM:
+        deltaY = 1
+        pcResult = pcResult + 1
 
-    glColor3f(0,color+.5,1)
-    glLoadIdentity()
-    glTranslate(x+2.25,-2.5*.25,0.1)
-    glutSolidSphere(.25,10,40)
+    player.left = mouse_x - 30
+    player.right = mouse_x + 30
+    DrawRectangle(player)
 
-    glLoadIdentity()
-    glTranslate(x+2.25,-2.5*.25,-1)
-    glutSolidSphere(.25,10,40)
+    if Test_Ball_Player(ball, player) == True:
+        deltaY = 1
+        playerResult = playerResult + 1
+
+    glutSwapBuffers()
 
 
-    if(x > 10 ):
-        co = -co
-    elif(x<-10):
-        co = -co
-    x-=.01*co
-    y+= .1*co
-
-    if(color >=.5 and color >0):
-        color += .5*co
-    else:
-        color += .5*co
-
-
-    glFlush()
+def main():
+    glutInit()
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB)
+    glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT)
+    glutInitWindowPosition(0, 0)
+    glutCreateWindow(b"Simple Ball Bat OpenGL game");
+    glutDisplayFunc(Display)
+    glutTimerFunc(time_interval, Timer, 1)
+    glutKeyboardFunc(keyboard)
+    glutPassiveMotionFunc(MouseMotion)
+    init()
+    glutMainLoop()
 
 
-
-
-
-
-
-glutInit()
-glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB)
-glutInitWindowSize(600,600)
-glutCreateWindow(b"hey")
-Init()
-glutDisplayFunc(Anime)
-glutIdleFunc(Anime)
-glutMainLoop()
+main()
