@@ -3,6 +3,8 @@ from OpenGL.GLU import *
 from OpenGL.GLUT import *
 from pydub import AudioSegment
 from pydub.playback import play
+import threading as thrd
+
 from playsound import *
 
 import numpy as np
@@ -104,17 +106,35 @@ def car():
     glPopAttrib()
     glPopMatrix()
 
+def print_something():
+    playsound("/home/ahmdalgendi/PycharmProjects/road_fight_phase 1/car.wav")
 
+def car_sound():
+    while True:
+        playsound("/home/ahmdalgendi/PycharmProjects/road_fight_phase 1/formula+1.wav")
+
+
+carsound = thrd.Thread(target=car_sound, args=[])
+carsound.start()
 
 def Anime():
-    global x,y,co,color, z, move, cnt, acc, val
+    global x,y,co,color, z, move, cnt, acc, val,a
     if z >18 or z< -18:
-        playsound("/home/ahmdalgendi/PycharmProjects/road_fight_phase 1/car.wav")
+        a = thrd.Thread(target=print_something, args=[])
+        
+        a.start()
+
         z=0
         x=0
         move =0
         acc=0
         val=0
+        for i in range(10):
+            glClearColor(1,1,1,1)
+            glClear(GL_COLOR_BUFFER_BIT)
+            glutSwapBuffers()
+            time.sleep(0.1)
+
     time.sleep(0.01)
 
     glMatrixMode(GL_MODELVIEW)
